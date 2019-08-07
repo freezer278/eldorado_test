@@ -4,6 +4,8 @@
 namespace App\Http\Requests;
 
 
+use App\Song;
+
 interface GetSongsRequestInterface
 {
     /**
@@ -20,4 +22,9 @@ interface GetSongsRequestInterface
      * @return int
      */
     public function getOrderByDirection(): string;
+
+    /**
+     * @return array
+     */
+    public function getFields(): array;
 }

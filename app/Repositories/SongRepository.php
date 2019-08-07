@@ -20,13 +20,26 @@ class SongRepository implements SongRepositoryInterface
     public function getByRequest(GetSongsRequestInterface $request): iterable
     {
         return Cache::tags(self::CACHE_TAG)->rememberForever(
-            'getByRequest_' . $request->getOrderBy() . $request->getOrderByDirection() . $request->getLimit(),
+            $this->getCacheKey($request),
             function () use ($request) {
                 return Song::query()
                     ->orderBy($request->getOrderBy(), $request->getOrderByDirection())
                     ->limit($request->getLimit())
-                    ->get();
+                    ->get($request->getFields());
             });
+    }
+
+    /**
+     * @param GetSongsRequestInterface $request
+     * @return string
+     */
+    private function getCacheKey(GetSongsRequestInterface $request): string
+    {
+        return 'getByRequest_'
+            . $request->getOrderBy()
+            . $request->getOrderByDirection()
+            . $request->getLimit()
+            . implode(',', $request->getFields());
     }
 
     /**

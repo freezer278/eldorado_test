@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Song;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class GetSongsRequest extends FormRequest
+class GetSongsRequest extends FormRequest implements GetSongsRequestInterface
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,6 +29,10 @@ class GetSongsRequest extends FormRequest
             'order_by' => 'nullable|in:name',
             'order_by_direction' => 'required_with:order_by|in:asc,desc',
             'limit' => 'nullable',
+            'fields' => 'nullable|array',
+            'fields.*' => [
+                Rule::in(Song::VISIBLE_FIELDS)
+            ],
         ];
     }
 
@@ -39,7 +45,7 @@ class GetSongsRequest extends FormRequest
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getOrderBy(): string
     {
@@ -47,10 +53,18 @@ class GetSongsRequest extends FormRequest
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getOrderByDirection(): string
     {
         return $this->input('order_by_direction', 'asc');
+    }
+
+    /**
+     * @return array
+     */
+    public function getFields(): array
+    {
+        return $this->input('fields', Song::VISIBLE_FIELDS);
     }
 }
