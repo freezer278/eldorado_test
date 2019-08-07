@@ -18,7 +18,7 @@ Route::middleware('auth')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'songs',], function () {
+Route::group(['prefix' => 'songs', 'middleware' => ['auth', 'permission:manage_songs']], function () {
     Route::get('/', 'SongsController@index')->name('songs.index');
     Route::post('/', 'SongsController@create')->name('songs.create');
     Route::put('/{song}', 'SongsController@update')->name('songs.update');

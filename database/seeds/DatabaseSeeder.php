@@ -1,6 +1,10 @@
 <?php
 
+use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        $adminRole = Role::create(['name' => 'admin']);
+
+        $adminRole->syncPermissions([
+            Permission::create(['name' => 'manage_songs']),
+        ]);
+
+        $adminUser = User::create([
+            'name' => 'admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('secret'),
+        ]);
+
+        $adminUser->assignRole($adminRole);
     }
 }
