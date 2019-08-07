@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GetSongsRequest;
 use App\Http\Requests\UpdateSongRequest;
 use App\Http\Resources\SongResource;
+use App\Jobs\CreateSongJob;
+use App\Jobs\DeleteSongJob;
+use App\Jobs\UpdateSongJob;
 use App\Song;
 use Illuminate\Http\Request;
 
@@ -38,9 +41,9 @@ class SongsController extends Controller
      */
     public function create(UpdateSongRequest $request)
     {
-        $song = Song::create($request->getData());
+        CreateSongJob::dispatch($request->getData());
 
-        return new SongResource($song);
+        return response()->json();
     }
 
     /**
@@ -50,9 +53,9 @@ class SongsController extends Controller
      */
     public function update(Song $song, UpdateSongRequest $request)
     {
-        $song->update($request->getData());
+        UpdateSongJob::dispatch($song, $request->getData());
 
-        return new SongResource($song);
+        return response()->json();
     }
 
     /**
@@ -62,8 +65,8 @@ class SongsController extends Controller
      */
     public function delete(Song $song)
     {
-        $song->delete();
+        DeleteSongJob::dispatch($song);
 
-        return new SongResource($song);
+        return response()->json();
     }
 }
