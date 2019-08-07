@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetSongsRequest;
 use App\Http\Requests\UpdateSongRequest;
 use App\Http\Resources\SongResource;
 use App\Song;
@@ -13,9 +14,11 @@ class SongsController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(GetSongsRequest $request)
     {
-        $songs = Song::query()->get();
+        $songs = Song::query()
+            ->orderBy($request->getOrderBy(), $request->getOrderByDirection())
+            ->get($request->getLimit());
 
         return SongResource::collection($songs);
     }
