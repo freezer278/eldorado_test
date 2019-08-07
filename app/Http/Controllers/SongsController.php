@@ -8,31 +8,34 @@ use App\Http\Resources\SongResource;
 use App\Jobs\CreateSongJob;
 use App\Jobs\DeleteSongJob;
 use App\Jobs\UpdateSongJob;
+use App\Repositories\SongRepositoryInterface;
 use App\Song;
-use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class SongsController extends Controller
 {
     /**
-     * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @var SongRepositoryInterface
      */
-    public function index(GetSongsRequest $request)
-    {
-        $songs = Song::query()
-            ->orderBy($request->getOrderBy(), $request->getOrderByDirection())
-            ->get($request->getLimit());
+    private $songRepository;
 
-        return SongResource::collection($songs);
+    /**
+     * SongsController constructor.
+     * @param SongRepositoryInterface $songRepository
+     */
+    public function __construct(SongRepositoryInterface $songRepository)
+    {
+        $this->songRepository = $songRepository;
     }
 
     /**
-     * @param Song $song
-     * @return SongResource
+     * @param GetSongsRequest $request
+     * @return AnonymousResourceCollection
      */
-    public function getSingle(Song $song)
+    public function index(GetSongsRequest $request)
     {
-        return new SongResource($song);
+        return SongResource::collection($this->songRepository->getByRequest($request));
     }
 
     /**
@@ -48,7 +51,7 @@ class SongsController extends Controller
 
     /**
      * @param Song $song
-     * @param Request $request
+     * @param UpdateSongRequest $request
      * @return SongResource
      */
     public function update(Song $song, UpdateSongRequest $request)
@@ -61,7 +64,7 @@ class SongsController extends Controller
     /**
      * @param Song $song
      * @return SongResource
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(Song $song)
     {

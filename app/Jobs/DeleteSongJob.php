@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Repositories\SongRepositoryInterface;
 use App\Song;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -35,6 +36,7 @@ class DeleteSongJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->song->delete();
+        $songRepository = app()->make(SongRepositoryInterface::class);
+        $songRepository->delete($this->song);
     }
 }

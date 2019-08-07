@@ -19,7 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'songs',], function () {
     Route::get('/', 'SongsController@index')->name('songs.index');
-    Route::get('/{song}', 'SongsController@getSingle')->name('songs.get_single');
     Route::post('/', 'SongsController@create')->name('songs.create');
     Route::put('/{song}', 'SongsController@update')->name('songs.update');
     Route::delete('/{song}', 'SongsController@delete')->name('songs.delete');

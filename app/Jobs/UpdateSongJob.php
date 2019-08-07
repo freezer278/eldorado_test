@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Repositories\SongRepositoryInterface;
 use App\Song;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -40,6 +41,7 @@ class UpdateSongJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->song->update($this->data);
+        $songRepository = app()->make(SongRepositoryInterface::class);
+        $songRepository->update($this->song, $this->data);
     }
 }
