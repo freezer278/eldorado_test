@@ -16,3 +16,11 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'songs',], function () {
+    Route::get('/', 'SongsController@index');
+    Route::get('/{song}', 'SongsController@getSingle');
+    Route::post('/', 'SongsController@create');
+    Route::put('/{song}', 'SongsController@update');
+    Route::delete('/{song}', 'SongsController@delete');
+});
